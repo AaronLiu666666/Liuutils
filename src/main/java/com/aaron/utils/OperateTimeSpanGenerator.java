@@ -87,7 +87,7 @@ public class OperateTimeSpanGenerator {
 //        System.out.println(list.toArray().length);
 ////        genOperateTimeSpanAndOther(7,0, list,"邓元亚","陈烨皓","否").forEach(System.out::println);
         genSteps(list.size()).forEach(System.out::println);
-
+//     System.out.println(list.size());
     }
 
 }
