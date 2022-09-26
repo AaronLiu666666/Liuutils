@@ -124,11 +124,15 @@ public class WarnPusher {
             });
         }
         try {
+            // 等待所有任务执行完毕
             executor.shutdown();
+            // 阻塞当前线程，直到所有任务执行完毕（超时或者中断）
             if (!executor.awaitTermination(60 * 60, TimeUnit.SECONDS)) {
+                // 超时的时候停止所有任务
                 executor.shutdownNow();
             }
         } catch (InterruptedException e) {
+            // 异常的时候停止所有任务
             executor.shutdownNow();
         }
         System.out.println("推送完成");

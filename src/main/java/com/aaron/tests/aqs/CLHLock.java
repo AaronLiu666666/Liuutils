@@ -1,4 +1,4 @@
-package com.aaron.tests;
+package com.aaron.tests.aqs;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -61,6 +61,8 @@ public class CLHLock {
         // 将当前节点的锁状态设置为false
         qNode.locked = false;
 
+        // 防止死锁。如果没有下一句，若当前线程unlock后迅速竞争到锁，由于当前线程还保存着自己的node,所以`QNode node = this.myNodeThreadLocal.get();`获取的依旧是该线程的node(此时该node还被链表的下一个节点引用)，执行lock后把自己的locked = true然后把自己又加在尾部，然而链表的下一个节点还在等该线程的locked = false而当前节点还在等自己之前的节点locked = false，1->3->2 1在等2执行,2在等3执行,3又必须让1先执行完。
+        // 所以防止上述事情的发生，释放锁时不能允许当前线程还保存自己的node，防止该线程再次抢占线程发生死锁。
         this.myNodeThreadLocal.set(this.myPredThreadLocal.get());
     }
 
